@@ -28,22 +28,6 @@ namespace dg
     Floating:  A floating Node is both a Head and a Tail.
    */
 
-  template <typename T>
-  class node
-  {
-  public:
-    node();
-    node(T&);
-    ~node();
-
-    T& get() const;
-  private:
-    //Private data members
-
-    //Node will assume ownership of data lifetime.
-    const std::unique_ptr<T> _data;
-
-  };
 
   template <typename T>
   class directed_graph
@@ -65,38 +49,41 @@ namespace dg
 
 
   private:
-    class node_handle
+    class node
     {
-      //Wrapper class for nodes to store edge information
-      //separately for each graph a node may be a part of.
     public:
-      node_handle();
-      node_handle(node<T>);
-      ~node_handle();
+      node();
+      node(const T&);
+      ~node();
 
       T& get() const;
       bool isHead() const;
       bool isTail() const;
       bool isFloating() const;
+
+      void addPredecessor(const node&);
+      void addSuccessor(const node&);
+
+
     private:
-      const std::shared_ptr<node<T>> _node;
+      const std::shared_ptr<T> _data;
       //Both sets include only immediately-adjacent nodes.
-      std::unordered_set<node_handle&> _predecessors;
-      std::unordered_set<node_handle&> _successors;
+      std::unordered_set<node&> _predecessors;
+      std::unordered_set<node&> _successors;
     };
 
     //Private methods
-    node_handle& getPosition(const T&) const;
+    node& getPosition(const T&) const;
 
     //Private data members
 
     // The set of all nodes in the graph.
-    std::unordered_set<node_handle&> _nodes;
+    std::unordered_set<node&> _nodes;
     //Used to match an external T to the private node that contains it.
-    std::unordered_map<T&, node_handle&> _handleRegistry;
+    std::unordered_map<T&, node&> _nodeRegistry;
     //_heads and _tails will always be subsets of _nodes
-    std::unordered_set<node_handle> _heads;
-    std::unordered_set<node_handle> _tails;
+    std::unordered_set<node> _heads;
+    std::unordered_set<node> _tails;
 
   };
 }
