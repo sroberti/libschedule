@@ -86,4 +86,8 @@ namespace dg
     std::unordered_set<node> _tails;
 
   };
+
+
+  //include definition file for templates
+  #include "directed_graph.cpp"
 }
